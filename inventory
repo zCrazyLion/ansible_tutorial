@@ -1,3 +1,14 @@
--p 2200 root@localhost
--p 2201 root@localhost
--p 2202 root@localhost
+all:
+  hosts:
+    localhost_2200:
+      ansible_host: localhost
+      ansible_port: 2200
+      ansible_user: root
+    localhost_2201:
+      ansible_host: localhost
+      ansible_port: 2201
+      ansible_user: root
+    localhost_2202:
+      ansible_host: localhost
+      ansible_port: 2202
+      ansible_user: root

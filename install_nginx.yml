@@ -5,15 +5,15 @@
   tasks:
 
   - name: update repository index
-    apt:
+    ansible.builtin.apt:
       update_cache: yes
 
   - name: install nginx package
-    apt:
+    ansible.builtin.apt:
       name: nginx
       state: latest
 
-  - name: start apache2 service
+  - name: start nginx service
     ansible.builtin.service:
-      name: apache2
+      name: nginx
       state: started

@@ -13,8 +13,7 @@
         state: present
         key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
 
----
-- name: Install ans start Nginx
+- name: Install and start Nginx
   hosts: all
   become: true
   tasks:

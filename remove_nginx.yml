@@ -13,7 +13,6 @@
         state: present
         key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
 
----
 - name : Stop and remove nginx
   hosts: all
   become: true

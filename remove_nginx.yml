@@ -1,13 +1,23 @@
 ---
+- name: SSH-Key deployment on new containers
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_user: root
+    ansible_ssh_pass: "1234"
+    ansible_connection: ssh
+  tasks:
+    - name: Copy public key to host
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
 
-- hosts: all
+---
+- name : Stop and remove nginx
+  hosts: all
   become: true
   tasks:
-
-  - name: update repository index
-    ansible.builtin.apt:
-      update_cache: yes
-
   - name: stop nginx service
     ansible.builtin.service:
       name: nginx
@@ -17,3 +27,4 @@
     ansible.builtin.apt:
       name: nginx
       state: absent
+      update_cache: yes

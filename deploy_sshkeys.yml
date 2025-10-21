@@ -1,3 +1,4 @@
+# Module for other playbooks to ensure a working ssh connection
 ---
 - name: SSH-Key deployment on new containers
   hosts: all

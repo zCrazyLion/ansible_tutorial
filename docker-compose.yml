@@ -4,8 +4,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      WATCHTOWER_POLL_INTERVAL: "10"
-      WATCHTOWER_DEBUG: "true"
+      WATCHTOWER_POLL_INTERVAL: "600"
       WATCHTOWER_CLEANUP: "true"
     # tell watchtower to not monitor itself
     #labels:

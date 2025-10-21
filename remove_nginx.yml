@@ -17,11 +17,6 @@
   hosts: all
   become: true
   tasks:
-  - name: stop nginx service
-    ansible.builtin.service:
-      name: nginx
-      state: stopped
-
   - name: remove nginx package
     ansible.builtin.apt:
       name: nginx

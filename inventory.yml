@@ -1,27 +1,15 @@
 all:
   hosts:
-#    localhost_2200:
-#      ansible_host: localhost
-#      ansible_port: 2200
-#      ansible_user: root
-#    localhost_2201:
-#      ansible_host: localhost
-#      ansible_port: 2201
-#      ansible_user: root
-#    localhost_2202:
-#      ansible_host: localhost
-#      ansible_port: 2202
-#      ansible_user: root
+    server_172_28_0_2:
+      ansible_host: 172.28.0.2
+      ansible_port: 22
+      ansible_user: root
     server_172_28_0_3:
       ansible_host: 172.28.0.3
       ansible_port: 22
       ansible_user: root
     server_172_28_0_4:
       ansible_host: 172.28.0.4
-      ansible_port: 22
-      ansible_user: root
-    server_172_28_0_5:
-      ansible_host: 172.28.0.5
       ansible_port: 22
       ansible_user: root
     

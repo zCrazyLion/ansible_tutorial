@@ -28,7 +28,6 @@ services:
     networks:
       ubuntu_net:
         ipv4_address: 172.28.0.3
-
   UbuntuTwo:
     image: ubuntu:latest
     container_name: UbuntuTwo
@@ -46,7 +45,6 @@ services:
     networks:
       ubuntu_net:
         ipv4_address: 172.28.0.4
-
   UbuntuThree:
     image: ubuntu:latest
     container_name: UbuntuThree

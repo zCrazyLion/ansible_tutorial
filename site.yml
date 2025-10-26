@@ -1,0 +1,80 @@
+---
+- name: SSH-Key deployment on new containers
+  hosts: all
+  vars:
+    ansible_user: root
+    ansible_ssh_pass: "1234"
+    ansible_connection: ssh
+  tasks:
+    - name: Copy public key to host
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+
+- name: Install all Updates
+  hosts: all
+  become: true
+  tasks:
+    - name: install updates (CentOS)
+      tags: always
+      ansible.builtin.dnf:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+    - name: install updates (Ubuntu)
+      tags: always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+- name: Install apache and php
+  hosts: web_servers
+  become: true
+  tasks:
+    - name: install apache and php for Ubuntu servers
+      tags: apache, apache2, ubuntu
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: install apache and php for CentOS servers
+      tags: apache, centos, httpd
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+- name: Install mariadb package
+  hosts: db_servers
+  become: true
+  tasks:
+    - name: install mariadb package (CentOS)
+      tags: centos, db, mariadb
+      ansible.builtin.dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "CentOS"
+    - name: install mariadb package (Ubuntu)
+      tags: db, mariadb, ubuntu
+      ansible.builtin.apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks: 
+    - name: install samba package
+      tags: samba
+      ansible.builtin.package:
+        name: samba
+        state: latest
+  
+
+    

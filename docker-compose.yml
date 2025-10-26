@@ -16,7 +16,7 @@ services:
     container_name: UbuntuOne
     hostname: UbuntuOne
     ports:
-      - "8081:80"
+      - "8081:22"
     command: bash -c "
       apt-get update &&
       apt-get install -y openssh-server &&
@@ -33,7 +33,7 @@ services:
     container_name: UbuntuTwo
     hostname: UbuntuTwo
     ports:
-      - "8082:80"
+      - "8082:22"
     command: bash -c "
       apt-get update &&
       apt-get install -y openssh-server &&
@@ -50,7 +50,7 @@ services:
     container_name: UbuntuThree
     hostname: UbuntuThree
     ports:
-      - "8083:80"
+      - "8083:22"
     command: bash -c "
       apt-get update &&
       apt-get install -y openssh-server &&

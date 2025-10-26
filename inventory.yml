@@ -1,13 +1,17 @@
-all:
+web_servers:
   hosts:
     server_172_28_0_2:
       ansible_host: 172.28.0.2
       ansible_port: 22
       ansible_user: root
+db_servers:
+  hosts:
     server_172_28_0_3:
       ansible_host: 172.28.0.3
       ansible_port: 22
       ansible_user: root
+file_servers:
+  hosts:
     server_172_28_0_4:
       ansible_host: 172.28.0.4
       ansible_port: 22

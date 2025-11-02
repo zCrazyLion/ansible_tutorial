@@ -1,0 +1,143 @@
+---
+- name: SSH-Key deployment on new containers
+  hosts: all
+  vars:
+    ansible_user: root
+    ansible_ssh_pass: "1234"
+    ansible_connection: ssh
+  tasks:
+    - name: Copy public key to host
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+
+- name: Install all Updates
+  hosts: all
+  become: true
+  tasks:
+    - name: update repo cache (CentOS)
+      tags: always
+      ansible.builtin.dnf:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "CentOS"
+    - name: update repo cache (Ubuntu)
+      tags: always
+      ansible.builtin.apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks: 
+    - name: install sudo package
+      tags: sudo
+      ansible.builtin.apt:
+        name: sudo
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+  
+- hosts: all
+  become: true
+  tasks:
+  - name: add ssh key for simone
+    tags: always
+    ansible.builtin.authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINm95N4QJskeMpBcy0ptfS+AmDbGf1zJUUMm1/R8nYAi ansible"
+
+- hosts: workstations
+  become: true
+  tasks:
+    - name: install unzip
+      ansible.builtin.package:
+        name: unzip
+    - name: install terraform
+      ansible.builtin.unarchive:
+        src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: 0755
+        owner: root
+        group: root
+
+- name: Install apache and php
+  hosts: web_servers
+  become: true
+  tasks:
+    - name: install apache and php for Ubuntu servers
+      tags: apache, apache2, ubuntu
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: install apache and php for CentOS servers
+      tags: apache, centos, httpd
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
+        state: latest
+      when: ansible_distribution == "CentOS"
+    - name: start httpd (CentOS)
+      tags: apache, centos, httpd
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+    - name: change e-mail address for admin
+      tags: apache, centos, httpd
+      ansible.builtin.lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin somebody@somewhere.net
+      when: ansible_distribution == "CentOS"
+      register: httpd
+    - name: restart httpd (CentOS)
+      tags: apache2, centos, httpd
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+      when: httpd.changed
+    - name: copy default html file for site
+      tags: apache, apache2, httpd
+      ansible.builtin.copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
+- name: Install mariadb package
+  hosts: db_servers
+  become: true
+  tasks:
+    - name: install mariadb package (CentOS)
+      tags: centos, db, mariadb
+      ansible.builtin.dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "CentOS"
+    - name: install mariadb package (Ubuntu)
+      tags: db, mariadb, ubuntu
+      ansible.builtin.apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks: 
+    - name: install samba package
+      tags: samba
+      ansible.builtin.package:
+        name: samba
+        state: latest
+  
+
+    

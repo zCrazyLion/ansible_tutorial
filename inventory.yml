@@ -16,4 +16,10 @@ file_servers:
       ansible_host: 172.28.0.4
       ansible_port: 22
       ansible_user: root
+workstations:
+  hosts:
+    server_172_28_0_5:
+      ansible_host: 172.28.0.5
+      ansible_port: 22
+      ansible_user: root
     

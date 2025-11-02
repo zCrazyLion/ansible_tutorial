@@ -1,0 +1,62 @@
+---
+- name: SSH-Key deployment on new containers
+  hosts: all
+  vars:
+    ansible_user: root
+    ansible_ssh_pass: "1234"
+    ansible_connection: ssh
+  tasks:
+    - name: Copy public key to host
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/ansible.pub') }}"
+
+- name: Install all Updates
+  hosts: all
+  become: true
+  tasks:
+    - name: install updates (CentOS)
+      tags: always
+      ansible.builtin.dnf:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+    - name: install updates (Ubuntu)
+      tags: always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks: 
+    - name: install sudo package
+      tags: sudo
+      ansible.builtin.apt:
+        name: sudo
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+  
+- hosts: all
+  become: true
+  tasks:
+  - name: create simone user
+    tags: always
+    ansible.builtin.user:
+      name: simone
+      groups: root
+  - name: add ssh key for simone
+    tags: always
+    ansible.builtin.authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINm95N4QJskeMpBcy0ptfS+AmDbGf1zJUUMm1/R8nYAi ansible"
+  - name: add sudoers file for simone
+    tags: always
+    ansible.builtin.copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+      mode: 0440
